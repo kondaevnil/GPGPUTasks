@@ -115,11 +115,11 @@ int main() {
             OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_GLOBAL_MEM_SIZE, deviceMemorySize, &deviceGlobalMemSize, nullptr));
             std::cout << "    Device memory size: " << deviceGlobalMemSize << std::endl;
 
-            size_t deviceVendorSize = 0;
-            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_VENDOR, 0, nullptr, &deviceVendorSize));
-            std::vector<unsigned char> deviceVendor(deviceVendorSize, 0);
-            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_VENDOR, deviceVendorSize, deviceVendor.data(), nullptr));
-            std::cout << "    Vendor: " << deviceVendor.data() << std::endl;
+            size_t deviceExtSize = 0;
+            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_EXTENSIONS, 0, nullptr, &deviceExtSize));
+            std::vector<unsigned char> deviceExt(deviceExtSize, 0);
+            OCL_SAFE_CALL(clGetDeviceInfo(device, CL_DEVICE_EXTENSIONS, deviceExtSize, deviceExt.data(), nullptr));
+            std::cout << "    Extensions: " << deviceExt.data() << std::endl;
         }
     }
 

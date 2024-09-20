@@ -224,6 +224,9 @@ int main() {
         }
     }
 
+    clReleaseMemObject(cbuff);
+    clReleaseMemObject(abuff);
+    clReleaseMemObject(bbuff);
     clReleaseKernel(kernel);
     clReleaseProgram(program);
     clReleaseContext(context);

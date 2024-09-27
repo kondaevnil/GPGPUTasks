@@ -134,7 +134,7 @@ int main(int argc, char **argv)
                             results_vram, width, height,
                             centralX - sizeX / 2.0f, centralY - sizeY / 2.0f,
                             sizeX, sizeY,
-                            iterationsLimit, true);
+                            iterationsLimit, 1);
                 t.nextLap();
             }
 

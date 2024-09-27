@@ -43,9 +43,8 @@ __kernel void sum3(__global const unsigned int *a,
     const unsigned int grs = get_local_size(0);
 
     unsigned int res = 0;
-    for (int i = 0; i < VPW; i++) {
-        unsigned int ind = VPW * wid * grs + i * grs + lid;
-        if (ind < n) res += a[ind];
+    for (unsigned int i = VPW * wid * grs + lid; i < VPW * (wid + 1) * grs; i += grs) {
+        if (i < n) res += a[i];
     }
 
     atomic_add(sum, res);

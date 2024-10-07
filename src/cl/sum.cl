@@ -5,7 +5,7 @@
 #line 6
 
 #define VPW 32
-#define WGS 128
+#define WGS 64
 
 __kernel void sum1(__global const unsigned int *a,
                    __global unsigned int *sum,

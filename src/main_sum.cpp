@@ -16,8 +16,10 @@ void raiseFail(const T &a, const T &b, std::string message, std::string filename
 }
 
 #define EXPECT_THE_SAME(a, b, message) raiseFail(a, b, message, __FILE__, __LINE__)
+#define VPW 32
+#define WGS 64
 
-void exec_sum(ocl::Kernel &sum, gpu::gpu_mem_32u &as_gpu, unsigned int n, int benchmarkingIters, unsigned int reference_sum)
+void exec_sum(ocl::Kernel &sum, gpu::gpu_mem_32u &as_gpu, unsigned int n, int benchmarkingIters, unsigned int reference_sum, unsigned int vpw)
 {
     sum.compile();
     gpu::gpu_mem_32u s_gpu;
@@ -28,7 +30,7 @@ void exec_sum(ocl::Kernel &sum, gpu::gpu_mem_32u &as_gpu, unsigned int n, int be
         unsigned int s = 0;
         s_gpu.writeN(&s, 1);
 
-        sum.exec(gpu::WorkSize(128, (n + 128 - 1) / 128 * 128), as_gpu, s_gpu, n);
+        sum.exec(gpu::WorkSize(WGS, (n + WGS - 1) / WGS * WGS / vpw), as_gpu, s_gpu, n);
         s_gpu.readN(&s, 1);
         EXPECT_THE_SAME(reference_sum, s, "CPU result should be consistent!");
         t.nextLap();
@@ -92,27 +94,27 @@ int main(int argc, char **argv)
 
         {
             ocl::Kernel sum(sum_kernel, sum_kernel_length, "sum1");
-            exec_sum(sum, as_gpu, n, benchmarkingIters, reference_sum);
+            exec_sum(sum, as_gpu, n, benchmarkingIters, reference_sum, 1);
         }
 
         {
             ocl::Kernel sum(sum_kernel, sum_kernel_length, "sum2");
-            exec_sum(sum, as_gpu, n, benchmarkingIters, reference_sum);
+            exec_sum(sum, as_gpu, n, benchmarkingIters, reference_sum, VPW);
         }
 
         {
             ocl::Kernel sum(sum_kernel, sum_kernel_length, "sum3");
-            exec_sum(sum, as_gpu, n, benchmarkingIters, reference_sum);
+            exec_sum(sum, as_gpu, n, benchmarkingIters, reference_sum, VPW);
         }
 
         {
             ocl::Kernel sum(sum_kernel, sum_kernel_length, "sum4");
-            exec_sum(sum, as_gpu, n, benchmarkingIters, reference_sum);
+            exec_sum(sum, as_gpu, n, benchmarkingIters, reference_sum, 1);
         }
 
         {
             ocl::Kernel sum(sum_kernel, sum_kernel_length, "sum5");
-            exec_sum(sum, as_gpu, n, benchmarkingIters, reference_sum);
+            exec_sum(sum, as_gpu, n, benchmarkingIters, reference_sum, 1);
         }
     }
 }

@@ -79,7 +79,6 @@ int main(int argc, char **argv) {
             while (block_size < n) {
                 merge_global.exec(gpu::WorkSize(64, n / 2), as_gpu, bs_gpu, block_size);
                 std::swap(as_gpu, bs_gpu);
-                as_gpu.readN(as.data(), n);
                 block_size *= 2;
             }
 

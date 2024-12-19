@@ -88,9 +88,6 @@ int main(int argc, char **argv) {
         ocl::Kernel copy(radix_kernel, radix_kernel_length, "copy_arrays");
         copy.compile();
 
-        std::vector<unsigned int> cnt(counters_size, 0);
-        std::vector<unsigned int> prf(counters_size, 0);
-
         timer t;
         for (int iter = 0; iter < benchmarkingIters; ++iter) {
             as_gpu.writeN(as.data(), as.size());
@@ -99,7 +96,7 @@ int main(int argc, char **argv) {
             for (int shift = 0; shift < 32; shift += BTS) {
                 // counter
                 count.exec(gpu::WorkSize(WGS, n), as_gpu, counters, shift);
-                copy.exec(gpu::WorkSize(WGS, n), counters, pref, counters);
+                copy.exec(gpu::WorkSize(WGS, n), counters, pref, counters_size);
                 // pref sums
                 for (unsigned int stride = 2; stride <= counters_size; stride *= 2) {
                     prefix_bin.exec(gpu::WorkSize(8, counters_size / stride), pref, stride, counters_size);

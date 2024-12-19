@@ -25,7 +25,6 @@ void raiseFail(const T &a, const T &b, std::string message, std::string filename
 
 #define EXPECT_THE_SAME(a, b, message) raiseFail(a, b, message, __FILE__, __LINE__)
 #define WGS 64
-#define VPW 32
 #define BTS 4
 
 std::vector<unsigned int> computeCPU(const std::vector<unsigned int> &as)
@@ -100,20 +99,14 @@ int main(int argc, char **argv) {
             for (int shift = 0; shift < 32; shift += BTS) {
                 // counter
                 count.exec(gpu::WorkSize(WGS, n), as_gpu, counters, shift);
-                counters.readN(cnt.data(), counters_size);
-
                 copy.exec(gpu::WorkSize(WGS, n), counters, pref, counters);
-
                 // pref sums
                 for (unsigned int stride = 2; stride <= counters_size; stride *= 2) {
                     prefix_bin.exec(gpu::WorkSize(8, counters_size / stride), pref, stride, counters_size);
                 }
-
                 for (unsigned int stride = counters_size / 2; stride >= 2; stride /= 2) {
-                    prefix.exec(gpu::WorkSize(8, (counters_size + stride - 1) / stride), pref, stride, counters_size);
+                    prefix.exec(gpu::WorkSize(4, (counters_size + stride - 1) / stride), pref, stride, counters_size);
                 }
-                pref.readN(prf.data(), counters_size);
-
                 // sort
                 radix.exec(gpu::WorkSize(1, (n + WGS - 1) / WGS), as_gpu, bs_gpu, counters, pref, shift);
 
